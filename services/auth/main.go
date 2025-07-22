@@ -6,6 +6,7 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/joho/godotenv"
+	"github.com/jeffrysusilo/go-wallet/services/auth/config"
 )
 
 func main() {
@@ -13,6 +14,8 @@ func main() {
 	if err != nil {
 		log.Fatal("Error loading .env file")
 	}
+
+	config.ConnectDB() // <-- inisialisasi koneksi DB
 
 	app := fiber.New()
 
