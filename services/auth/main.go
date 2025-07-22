@@ -6,7 +6,9 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/joho/godotenv"
+
 	"github.com/jeffrysusilo/go-wallet/services/auth/config"
+	"github.com/jeffrysusilo/go-wallet/services/auth/routes"
 )
 
 func main() {
@@ -15,13 +17,11 @@ func main() {
 		log.Fatal("Error loading .env file")
 	}
 
-	config.ConnectDB() // <-- inisialisasi koneksi DB
+	config.ConnectDB()
 
 	app := fiber.New()
 
-	app.Get("/", func(c *fiber.Ctx) error {
-		return c.SendString("Auth Service running 🚀")
-	})
+	routes.SetupRoutes(app) 
 
 	port := os.Getenv("PORT")
 	log.Fatal(app.Listen(":" + port))
