@@ -9,6 +9,7 @@ import (
 
 	"github.com/jeffrysusilo/go-wallet/services/auth/config"
 	"github.com/jeffrysusilo/go-wallet/services/auth/routes"
+	"github.com/jeffrysusilo/go-wallet/services/auth/middleware" 
 )
 
 func main() {
@@ -19,9 +20,11 @@ func main() {
 
 	config.ConnectDB()
 
-	app := fiber.New()
+	app := fiber.New(fiber.Config{
+		ErrorHandler: middleware.ErrorHandler,
+	})
 
-	routes.SetupRoutes(app) 
+	routes.SetupRoutes(app)
 
 	port := os.Getenv("PORT")
 	log.Fatal(app.Listen(":" + port))

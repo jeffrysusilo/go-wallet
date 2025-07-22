@@ -22,6 +22,10 @@ func JWTProtected() fiber.Handler {
 			return c.Status(401).JSON(fiber.Map{"error": "Invalid or expired token"})
 		}
 
+		// Simpan seluruh token ke Locals supaya bisa diakses RoleGuard
+		c.Locals("user", token)
+
+		// (opsional) Simpan user_id juga jika butuh di handler
 		claims := token.Claims.(jwt.MapClaims)
 		c.Locals("user_id", claims["user_id"])
 

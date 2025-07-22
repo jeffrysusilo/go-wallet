@@ -22,14 +22,19 @@ func CreateUser(user *model.User) error {
 }
 
 func GetUserByEmail(email string) (*model.User, error) {
-	query := `SELECT id, email, password_hash, full_name, created_at FROM users WHERE email = $1`
+	query := `
+		SELECT id, email, password_hash, full_name, role, created_at
+		FROM users
+		WHERE email = $1
+	`
 	row := config.DB.QueryRow(context.Background(), query, email)
 
 	user := &model.User{}
-	err := row.Scan(&user.ID, &user.Email, &user.Password, &user.FullName, &user.CreatedAt)
+	err := row.Scan(&user.ID, &user.Email, &user.Password, &user.FullName, &user.Role, &user.CreatedAt)
 	if err != nil {
 		return nil, err
 	}
+
 	return user, nil
 }
 
