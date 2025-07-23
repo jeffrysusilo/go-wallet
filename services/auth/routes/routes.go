@@ -6,7 +6,6 @@ import (
 	"github.com/jeffrysusilo/go-wallet/services/auth/middleware"
 )
 
-
 func SetupRoutes(app *fiber.App) {
 	app.Get("/", func(c *fiber.Ctx) error {
 		return c.SendString("Auth Service running 🚀")
