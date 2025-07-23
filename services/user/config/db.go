@@ -4,6 +4,7 @@ import (
 	"context"
 	"log"
 	"os"
+	"time"
 
 	"github.com/jackc/pgx/v5/pgxpool"
 )
@@ -12,14 +13,22 @@ var DB *pgxpool.Pool
 
 func ConnectDB() {
 	dsn := os.Getenv("DATABASE_URL")
+
 	var err error
-	DB, err = pgxpool.New(context.Background(), dsn)
-	if err != nil {
-		log.Fatalf("Unable to connect to DB: %v", err)
+	for i := 0; i < 10; i++ {
+		DB, err = pgxpool.New(context.Background(), dsn)
+		if err == nil {
+			err = DB.Ping(context.Background())
+		}
+
+		if err == nil {
+			log.Println("✅ Connected to DB")
+			return
+		}
+
+		log.Println("⏳ Waiting for DB... retrying in 2s")
+		time.Sleep(2 * time.Second)
 	}
-	err = DB.Ping(context.Background())
-	if err != nil {
-		log.Fatalf("Unable to ping DB: %v", err)
-	}
-	log.Println("Connected to User DB")
+
+	log.Fatalf("❌ Unable to connect to DB: %v", err)
 }
