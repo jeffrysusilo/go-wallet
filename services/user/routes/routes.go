@@ -11,10 +11,14 @@ func SetupRoutes(app *fiber.App) {
 		return c.SendString("User service running ✅")
 	})
 
-	// Public (untuk testing param)
 	app.Get("/profile/:id", controller.GetUserProfileByID)
 
-	// Protected
 	api := app.Group("/api", middleware.JWTProtected())
 	api.Get("/profile", controller.GetMyProfile)
+
+	api.Put("/profile", controller.UpdateMyProfile)
+
+	admin := api.Group("/admin", middleware.RoleGuard("admin"))
+	admin.Get("/users", controller.GetAllUsers)
+
 }

@@ -5,6 +5,7 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt/v5"
+	"strings"
 )
 
 func JWTProtected() fiber.Handler {
@@ -12,6 +13,10 @@ func JWTProtected() fiber.Handler {
 		tokenString := c.Get("Authorization")
 		if tokenString == "" {
 			return c.Status(401).JSON(fiber.Map{"error": "Missing token"})
+		}
+
+		if strings.HasPrefix(tokenString, "Bearer ") {
+			tokenString = strings.TrimPrefix(tokenString, "Bearer ")
 		}
 
 		token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
@@ -23,8 +28,11 @@ func JWTProtected() fiber.Handler {
 		}
 
 		claims := token.Claims.(jwt.MapClaims)
+
 		c.Locals("user_id", claims["user_id"])
+		c.Locals("user", token)
 
 		return c.Next()
 	}
 }
+
